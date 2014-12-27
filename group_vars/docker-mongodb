@@ -1,0 +1,16 @@
+# variables for lider-docker-ejabberd  installation
+
+domain: portos.com.tr
+ldap_base_dn: dc=portos,dc=com,dc=tr
+ldap_admin: cn=admin,{{ldap_base_dn}}
+ldap_admin_pwd: admin
+ldap_config_admin_pwd: admin
+
+ejabberd_domain: "{{ domain }}"
+ejabberd_auth_ldap_base_dn: "{{ ldap_base_dn }}"
+ejabberd_auth_ldap_host: 127.0.0.1
+ejabberd_auth_ldap_user: "{{ ldap_admin }}"
+ejabberd_auth_ldap_pwd: "{{ ldap_admin_pwd }}"
+
+ldap_purge_previous: true
+ejabberd_purge_previous: true

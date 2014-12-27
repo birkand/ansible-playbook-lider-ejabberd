@@ -1,0 +1,7 @@
+ejabberd_domain: "{{ ldap_domain }}"
+auth_ldap_base_dn: "{{ ldap_base_dn }}"
+auth_ldap_host: ldap
+auth_ldap_user: "{{ ldap_admin }}"
+auth_ldap_pwd: "{{ ldap_admin_pwd }}"
+
+ejabberd_purge_previous: true

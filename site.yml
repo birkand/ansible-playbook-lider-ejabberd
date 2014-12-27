@@ -1,0 +1,8 @@
+---
+# master playbook
+# file: site.yml
+#- include: ejabberdservers.yml
+#- include: dbservers.yml
+#- include: ldapservers.yml
+#- include: mariadbservers.yml
+#- include: mongodbservers.yml

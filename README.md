@@ -1,0 +1,2 @@
+ansible-playbook-lider-ejabberd
+===============================

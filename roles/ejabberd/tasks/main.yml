@@ -1,0 +1,93 @@
+---
+# file: roles/ejabberd/tasks/main.yml
+
+- name: purge if ejabberd exists  since changing hostname ruins mnesia database
+  apt: pkg=ejabberd state=absent purge=true
+  when: ejabberd_purge_previous
+  tags: 
+   - ejabberd
+
+- name: ejabberd should be installed
+  apt: pkg=ejabberd state=present
+  tags: 
+   - ejabberd
+
+- name: ejabberd service should be started
+  service: name=ejabberd state=started
+  tags:
+   - ejabberd
+
+#- name: configure ejabberd
+  #template: src=ejabberd.cfg.j2 dest=/etc/ejabberd/ejabberd.cfg owner=ejabberd group=ejabberd mode=0600
+  #tags: ejabberd 
+
+- name: copy ejabberd configuration
+  copy: src=ejabberd.cfg dest=/etc/ejabberd/ejabberd.cfg owner=ejabberd group=ejabberd mode=0600
+  tags: 
+   - ejabberd
+  # - ejabberd-cfg
+
+- name: configure ejabberd domain
+  replace: "dest=/etc/ejabberd/ejabberd.cfg regexp='IM_DOMAIN' replace='{{ ejabberd_domain }}'"
+  tags: 
+   - ejabberd
+  # - ejabberd-cfg
+
+- name: configure ejabberd ldap auth base dn
+  replace: "dest=/etc/ejabberd/ejabberd.cfg regexp='LDAP_BASE_DN' replace='{{ ejabberd_auth_ldap_base_dn }}'"
+  #notify: 
+  # - restart ejabberd
+  tags: 
+   - ejabberd
+  # - ejabberd-cfg
+
+- name: configure ejabberd ldap auth host
+  replace: "dest=/etc/ejabberd/ejabberd.cfg regexp='LDAP_HOST' replace='{{ ejabberd_auth_ldap_host }}'"
+  #notify: 
+  # - restart ejabberd
+  tags: 
+   - ejabberd
+  # - ejabberd-cfg
+
+- name: configure ejabberd ldap auth user
+  replace: "dest=/etc/ejabberd/ejabberd.cfg regexp='LDAP_USER' replace='{{ ejabberd_auth_ldap_user }}'"
+  #notify: 
+  # - restart ejabberd
+  tags: 
+   - ejabberd
+  # - ejabberd-cfg
+
+- name: configure ejabberd ldap auth password
+  replace: "dest=/etc/ejabberd/ejabberd.cfg regexp='LDAP_PWD' replace='{{ ejabberd_auth_ldap_pwd }}'"
+  #notify: 
+  # - restart ejabberd
+  tags: 
+   - ejabberd
+  # - ejabberd-cfg
+
+- name: ejabberd service should be restarted
+  service: name=ejabberd state=restarted
+  tags:
+   - ejabberd
+   
+- name: waiting for ejabberd server to come back
+ # local_action: 
+ #   module: wait_for host={{ inventory_hostname }} port=22 delay=10 timeout=10 state=started
+ # sudo: false
+  local_action: wait_for host={{ inventory_hostname }}
+            state=started port=5222 delay=10 timeout=30
+  sudo: false
+
+- name: create shared roster group called everyone
+  shell: "/usr/sbin/ejabberdctl srg-create everyone {{ ejabberd_domain }} 'everyone' this_is_everyone everyone"
+  sudo: yes
+  tags:
+   - ejabberd
+
+- name: add all users to shared roster group called everyone
+  shell: "/usr/sbin/ejabberdctl srg-user-add @all@  {{ ejabberd_domain }} 'everyone' {{ ejabberd_domain }}"
+  sudo: yes
+  tags:
+   - ejabberd
+
+

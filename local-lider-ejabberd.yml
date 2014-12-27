@@ -1,0 +1,8 @@
+---
+# file: docker-ldap.yml
+# playbook for mongodb tier docker installation
+- hosts: localhost
+  connection: local
+  roles:
+    - birkand.lider-ejabberd
+    #- mongodb

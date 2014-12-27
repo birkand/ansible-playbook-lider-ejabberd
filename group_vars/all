@@ -1,0 +1,3 @@
+---
+# file: group_vars/all
+#If we had any default values, or values that were universally true, we would put them in a file called group_vars/all:
